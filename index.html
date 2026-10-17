@@ -293,10 +293,17 @@ function speak(text,button){
   const settings=getVoiceSettings();
   const utter=new SpeechSynthesisUtterance(text);
   utter.lang='id-ID'; utter.rate=settings.rate; utter.pitch=settings.pitch; utter.volume=1;
-  const voices=window.speechSynthesis.getVoices();
-  const chosen=voices.find(v=>v.name===settings.voiceName);
-  const indonesian=voices.find(v=>(v.lang||'').toLowerCase().startsWith('id'));
-  if(chosen) utter.voice=chosen; else if(indonesian) utter.voice=indonesian;
+  
+const voices = window.speechSynthesis.getVoices();
+const indonesianVoices = voices.filter(v =>
+  (v.lang || '').toLowerCase().startsWith('id')
+);
+const chosen = indonesianVoices.find(v =>
+  v.name === settings.voiceName
+) || indonesianVoices.find(v =>
+  /google.*indonesia|indonesia.*google/i.test(v.name)
+) || indonesianVoices[0];
+if (chosen) utter.voice = chosen;
   window.speechSynthesis.speak(utter);
 }
 document.querySelectorAll('[data-say]').forEach(b=>b.addEventListener('click',()=>speak(b.dataset.say,b)));
