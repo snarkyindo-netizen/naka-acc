@@ -559,5 +559,23 @@ body.edit-mode .tile{outline:2px dashed #e34a4a!important;outline-offset:-3px!im
 @media(max-width:600px){.voice-settings{font-size:14px}.voice-settings h3{font-size:17px}}
 </style>
 
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .catch(error => console.error('SW error:', error));
+  });
+}
+</script>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .catch(error => console.error('SW error:', error));
+  });
+}
+</script>
+
 </body>
 </html>
