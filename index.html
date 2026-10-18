@@ -294,16 +294,18 @@ function speak(text,button){
   const utter=new SpeechSynthesisUtterance(text);
   utter.lang='id-ID'; utter.rate=settings.rate; utter.pitch=settings.pitch; utter.volume=1;
   
+
 const voices = window.speechSynthesis.getVoices();
-const indonesianVoices = voices.filter(v =>
-  (v.lang || '').toLowerCase().startsWith('id')
-);
-const chosen = indonesianVoices.find(v =>
+
+const chosen = voices.find(v =>
   v.name === settings.voiceName
-) || indonesianVoices.find(v =>
-  /google.*indonesia|indonesia.*google/i.test(v.name)
-) || indonesianVoices[0];
-if (chosen) utter.voice = chosen;
+);
+
+if (chosen) {
+  utter.voice = chosen;
+  utter.lang = chosen.lang;
+}
+
   window.speechSynthesis.speak(utter);
 }
 document.querySelectorAll('[data-say]').forEach(b=>b.addEventListener('click',()=>speak(b.dataset.say,b)));
