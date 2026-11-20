@@ -631,7 +631,46 @@ body[data-view="start"] #parentUnlockButton{display:none!important}\nbody[data-v
 @keyframes nakaSpeakIcon{from{transform:translateY(0) rotate(-3deg)}to{transform:translateY(-5px) rotate(3deg)}}
 
 </style>
-\n</body>
+\n
+<script>
+/* Proteksi tombol Back Android untuk NAKA (mode SPA/WebView).
+   Saat tombol Back browser/WebView memicu popstate, tahan pada tampilan aktif
+   dan jangan mengubah data-view menjadi "start". */
+(function () {
+  if (window.__nakaBackGuardInstalled) return;
+  window.__nakaBackGuardInstalled = true;
+
+  function keepCurrentScreen() {
+    try {
+      history.pushState({ nakaBackGuard: true }, '', location.href);
+    } catch (e) {}
+  }
+
+  // Siapkan satu entri pelindung setelah halaman siap.
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', keepCurrentScreen, { once: true });
+  } else {
+    keepCurrentScreen();
+  }
+
+  // Ketika Back memundurkan riwayat WebView/browser, buat entri pelindung lagi.
+  window.addEventListener('popstate', function () {
+    keepCurrentScreen();
+  });
+
+  // Cegah tombol Back pada keyboard/perangkat yang mengirim Escape/Backspace.
+  window.addEventListener('keydown', function (event) {
+    const key = event.key;
+    if (key === 'Escape' || key === 'Backspace' || key === 'BrowserBack') {
+      event.preventDefault();
+      event.stopPropagation();
+      keepCurrentScreen();
+    }
+  }, true);
+})();
+</script>
+
+</body>
 </html>
 
 <style>
